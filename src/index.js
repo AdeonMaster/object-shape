@@ -52,7 +52,13 @@ ObjectShape.oneOfType = arrayOfTypes => (prop, value) => {
   
   return `Value of '${prop}' is not matching the shape: '${prop}' is not a valid type`;
 } 
-ObjectShape.arrayOf = validator => (prop, value) => (value.length && value.every(item => validator('', item) === true)) || `Value of '${prop}' is not matching the shape: Not every element of '${prop}' passes condition`;
+ObjectShape.arrayOf = validator => (prop, value) => {
+  if (!Array.isArray(value)) {
+    return `Value of '${prop}' is not matching the shape: '${prop}' is not an array`;
+  }
+
+  return (value.length && value.every(item => validator('', item) === true)) || `Value of '${prop}' is not matching the shape: Not every element of '${prop}' passes condition`;
+}
 
 ObjectShape.custom = validator => validator;
 

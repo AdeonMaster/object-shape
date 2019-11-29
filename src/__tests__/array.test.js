@@ -1,17 +1,13 @@
 import ObjectShape from '../';
 
-describe('simple shape example', () => {
+describe('array', () => {
   const shape = new ObjectShape({
-    title: ObjectShape.string,
-    tags: ObjectShape.arrayOf(ObjectShape.string),
-    published: ObjectShape.bool
+    items: ObjectShape.array
   });
 
   it('should return true', () => {
     const object = {
-      title: 'Example title',
-      tags: ['news', 'advertisement'],
-      published: false
+      items: ['First', 'Second']
     };
 
     const result = shape.validate(object);
@@ -21,9 +17,7 @@ describe('simple shape example', () => {
 
   it('should return false', () => {
     const object = {
-      title: 'Example title',
-      tags: ['news', 'advertisement', null],
-      published: false
+      items: null
     };
 
     const result = shape.validate(object);
