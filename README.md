@@ -2,7 +2,7 @@
 Object shape validator inspired by React.js prop-types
 
 # Usage
-Creating basic shape:
+Creating basic shape and validate it:
 ```js
 import ObjectShape from 'object-shape-validator';
 
@@ -11,9 +11,7 @@ const shape = new ObjectShape({
   tags: ObjectShape.arrayOf(ObjectShape.string),
   published: ObjectShape.bool
 });
-```
-Validate object:
-```js
+
 const object = {
   title: 'Example title',
   tags: ['news', 'advertisement'],
@@ -21,6 +19,25 @@ const object = {
 };
 
 console.log(shape.validate(object));
+```
+
+Validate with static method:
+```js
+import ObjectShape from 'object-shape-validator';
+
+const shape = {
+  title: ObjectShape.string,
+  tags: ObjectShape.arrayOf(ObjectShape.string),
+  published: ObjectShape.bool
+};
+
+const object = {
+  title: 'Example title',
+  tags: ['news', 'advertisement'],
+  published: false
+};
+
+console.log(ObjectShape.validate(shape, object));
 ```
 
 # Build-in types

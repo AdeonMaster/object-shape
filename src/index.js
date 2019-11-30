@@ -30,6 +30,35 @@ class ObjectShape {
     
     return true;
   }
+
+  static validate(shape, object) {
+    const keys = Object.keys(shape);
+    const keysLen = keys.length;
+
+    for (let i = 0; i < keysLen; ++i) {
+      const key = keys[i];
+      
+      if (!object.hasOwnProperty(key)) {
+        /* eslint-disable no-console */
+        console.log(`Object does not contain '${key}' property`);
+
+        return false;
+      }
+
+      const validator = shape[key];
+      const value = object[key];
+      const result = validator(key, value);
+      
+      if (result !== true) {
+        /* eslint-disable no-console */
+        console.log(result);
+
+        return false;
+      }
+    }
+    
+    return true;
+  }
 }
 
 ObjectShape.string = (prop, value) => typeof (value) === 'string' || `Value of '${prop}' is not matching the shape: '${prop}' is not a string`;
