@@ -10,9 +10,10 @@ describe('string', () => {
       title: 'Example title'
     };
 
-    const result = shape.validate(object);
+    const errors = shape.validate(object);
+    console.log(errors);
 
-    expect(result).toEqual(true);
+    expect(errors.length).toBe(0);
   });
 
   it('should return false', () => {
@@ -20,8 +21,9 @@ describe('string', () => {
       title: null
     };
 
-    const result = shape.validate(object);
+    const errors = shape.validate(object);
+    console.log(errors);
 
-    expect(result).toEqual(false);
+    expect(errors.length).toBe(1);
   });
 });

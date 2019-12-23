@@ -1,7 +1,7 @@
 import ObjectShape from '../';
 
-describe('cusom', () => {
-  const validator = (prop, value) => value === 'test' || `'${prop} is not equals to 'test'`;
+describe('custom validator', () => {
+  const validator = (value, prop) => value === 'test' || `'${prop} is not equals to 'test'`;
 
   const shape = new ObjectShape({
     value: ObjectShape.custom(validator)
@@ -12,9 +12,10 @@ describe('cusom', () => {
       value: 'test'
     };
 
-    const result = shape.validate(object);
+    const errors = shape.validate(object);
+    console.log(errors);
 
-    expect(result).toEqual(true);
+    expect(errors.length).toBe(0);
   });
 
   it('should return false', () => {
@@ -22,8 +23,9 @@ describe('cusom', () => {
       value: 'custom'
     };
 
-    const result = shape.validate(object);
+    const errors = shape.validate(object);
+    console.log(errors);
 
-    expect(result).toEqual(false);
+    expect(errors.length).toBe(1);
   });
 });

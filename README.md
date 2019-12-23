@@ -2,7 +2,7 @@
 Object shape validator inspired by React.js prop-types
 
 # Usage
-Creating basic shape:
+Creating basic shape and validate it:
 ```js
 import ObjectShape from 'object-shape-validator';
 
@@ -11,16 +11,36 @@ const shape = new ObjectShape({
   tags: ObjectShape.arrayOf(ObjectShape.string),
   published: ObjectShape.bool
 });
-```
-Validate object:
-```js
+
 const object = {
   title: 'Example title',
   tags: ['news', 'advertisement'],
   published: false
 };
 
-console.log(shape.validate(object));
+const errors = shape.validate(object);
+console.log(errors);
+```
+
+Validate with static method:
+```js
+import ObjectShape from 'object-shape-validator';
+
+const shape = {
+  title: ObjectShape.string,
+  tags: ObjectShape.arrayOf(ObjectShape.string),
+  published: ObjectShape.bool
+};
+
+const object = {
+  title: 'Example title',
+  tags: ['news', 'advertisement'],
+  published: false
+};
+
+const errors = ObjectShape.validate(shape, object);
+
+console.log(errors);
 ```
 
 # Build-in types
@@ -102,6 +122,12 @@ const shape = new ObjectShape({
 ``ObjectShape.custom`` - custom validator function
 ```javascript
 const shape = new ObjectShape({
-  value: ObjectShape.custom((key, value) => value === 'test' || `${key} is not equals to 'test'`)
+  value: ObjectShape.custom((value, key) => value === 'test' || `${key} is not equals to 'test'`)
+});
+```
+or
+```javascript
+const shape = new ObjectShape({
+  value: (value, key) => value === 'test' || `${key} is not equals to 'test'`,
 });
 ```

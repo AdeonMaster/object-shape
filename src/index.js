@@ -1,63 +1,69 @@
+const matchingError = prop => `Value of "${prop}" is not matching the shape`;
+
 class ObjectShape {
   constructor(shape) {
     this.shape = shape;
-    this.shapeKeys = Object.keys(shape);
-    this.shapeKeysLen = this.shapeKeys.length;
   }
-  
-  validate(object) {
-    for (let i = 0; i < this.shapeKeysLen; ++i) {
-      const key = this.shapeKeys[i];
-      
-      if (!object.hasOwnProperty(key)) {
-        /* eslint-disable no-console */
-        console.log(`Object does not contain '${key}' property`);
 
-        return false;
+  static validate(shape, object) {
+    const shapeKeys = Object.keys(shape);
+    const shapeKeysLen = shapeKeys.length;
+    const errors = [];
+
+    for (let i = 0; i < shapeKeysLen; ++i) {
+      const shapeKey = shapeKeys[i];
+
+      if (!Object.prototype.hasOwnProperty.call(object, shapeKey)) {
+        errors.push(`${matchingError(shapeKey)}: Object does not contain "${shapeKey}" property`);
+        continue;
       }
-      
-      const validator = this.shape[key];
-      const value = object[key];
-      const result = validator(key, value);
-      
-      if (result !== true) {
-        /* eslint-disable no-console */
-        console.log(result);
 
-        return false;
+      const validator = shape[shapeKey];
+      const value = object[shapeKey];
+      const result = validator(value, shapeKey);
+
+      if (result !== true) {
+        errors.push(typeof(result) === 'string'
+          ? result
+          : matchingError(shapeKey)
+        );
       }
     }
-    
-    return true;
+
+    return errors;
+  }
+
+  validate(object) {
+    return ObjectShape.validate(this.shape, object);
   }
 }
 
-ObjectShape.string = (prop, value) => typeof (value) === 'string' || `Value of '${prop}' is not matching the shape: '${prop}' is not a string`;
-ObjectShape.number = (prop, value) => typeof (value) === 'number' || `Value of '${prop}' is not matching the shape: '${prop}' is not a number`;
-ObjectShape.func = (prop, value) => typeof (value) === 'function' || `Value of '${prop}' is not matching the shape: '${prop}' is not a function`;
-ObjectShape.bool = (prop, value) => typeof (value) === 'boolean' || `Value of '${prop}' is not matching the shape: '${prop}' is not a boolean`;
-ObjectShape.array = (prop, value) => Array.isArray(value) || `'Value of '${prop}' is not matching the shape: ${prop}' is not an array`;
-ObjectShape.object = (prop, value) => (typeof (value) === 'object' && !(value instanceof Array)) || `'Value of '${prop}' is not matching the shape: ${prop}' is not an object`;
+ObjectShape.string = (value, prop) => typeof (value) === 'string' || `${matchingError(prop)}: "${prop}" is not a string`;
+ObjectShape.number = (value, prop) => typeof (value) === 'number' || `${matchingError(prop)}: "${prop}" is not a number`;
+ObjectShape.func = (value, prop) => typeof (value) === 'function' || `${matchingError(prop)}: "${prop}" is not a function`;
+ObjectShape.bool = (value, prop) => typeof (value) === 'boolean' || `${matchingError(prop)}: "${prop}" is not a boolean`;
+ObjectShape.array = (value, prop) => Array.isArray(value) || `${matchingError(prop)}: "${prop}" is not an array`;
+ObjectShape.object = (value, prop) => (typeof (value) === 'object' && !(value instanceof Array)) || `${matchingError(prop)}: "${prop}" is not an object`;
 
-ObjectShape.instanceOf = classInstance => (prop, value) => value instanceof classInstance || `Value of '${prop}' is not matching the shape: '${prop}' is not instanceof '${classInstance}'`;
-ObjectShape.oneOf = array => (prop, value) => array.includes(value) || `'Value of '${prop}' is not matching the shape: ${prop}' is not included in array`;
-ObjectShape.oneOfType = arrayOfTypes => (prop, value) => {
+ObjectShape.instanceOf = classInstance => (value, prop) => value instanceof classInstance || `${matchingError(prop)}: "${prop}" is not instanceof "${classInstance}"`;
+ObjectShape.oneOf = array => (value, prop) => array.includes(value) || `${matchingError(prop)}: "${prop}" is not included in array`;
+ObjectShape.oneOfType = arrayOfTypes => (value, prop) => {
   for (let i = 0, len = arrayOfTypes.length; i < len; ++i) {
     const validator = arrayOfTypes[i];
-    
-    if (validator('', value) === true) {
+
+    if (validator(value, prop) === true) {
       return true;
     }
   }
   
-  return `Value of '${prop}' is not matching the shape: '${prop}' is not a valid type`;
+  return `${matchingError(prop)}: "${prop}" is not a valid type`;
 } 
-ObjectShape.arrayOf = validator => (prop, value) => {
+ObjectShape.arrayOf = validator => (value, prop) => {
   if (!Array.isArray(value)) {
-    return `Value of '${prop}' is not matching the shape: '${prop}' is not an array`;
+    return `${matchingError(prop)}: "${prop}" is not an array`;
   }
 
-  return (value.length && value.every(item => validator('', item) === true)) || `Value of '${prop}' is not matching the shape: Not every element of '${prop}' passes condition`;
+  return (value.length && value.every(item => validator('', item) === true)) || `${matchingError(prop)}: Not every element of "${prop}" passes condition`;
 }
 
 ObjectShape.custom = validator => validator;
