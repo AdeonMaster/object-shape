@@ -119,6 +119,16 @@ const shape = new ObjectShape({
   items: ObjectShape.arrayOf(ObjectShape.string)
 });
 ```
+``ObjectShape.objectOf`` - validates if value is a valid shape
+```javascript
+const shape = new ObjectShape({
+  user: {
+    fname: ObjectShape.string,
+    lname: ObjectShape.string,
+    age: ObjectShape.number 
+  }
+});
+```
 ``ObjectShape.custom`` - custom validator function
 ```javascript
 const shape = new ObjectShape({

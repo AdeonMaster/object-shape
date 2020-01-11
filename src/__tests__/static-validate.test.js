@@ -3,13 +3,13 @@ import ObjectShape from '../';
 describe('static validate', () => {
   const shape = {
     title: ObjectShape.string,
-    items: ObjectShape.arrayOf(ObjectShape.string)
+    items: ObjectShape.arrayOf(ObjectShape.string),
   };
 
   it('should return true', () => {
     const object = {
       title: 'Example title',
-      items: ['First', 'Second']
+      items: ['First', 'Second'],
     };
 
     const errors = ObjectShape.validate(shape, object);
@@ -21,7 +21,7 @@ describe('static validate', () => {
   it('should return false', () => {
     const object = {
       title: null,
-      items: []
+      items: [],
     };
 
     const errors = ObjectShape.validate(shape, object);

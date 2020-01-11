@@ -2,12 +2,12 @@ import ObjectShape from '../';
 
 describe('array', () => {
   const shape = new ObjectShape({
-    items: ObjectShape.array
+    items: ObjectShape.array,
   });
 
   it('should return true', () => {
     const object = {
-      items: ['First', 'Second']
+      items: ['First', 'Second'],
     };
 
     const errors = shape.validate(object);
@@ -18,7 +18,7 @@ describe('array', () => {
 
   it('should return false', () => {
     const object = {
-      items: null
+      items: null,
     };
 
     const errors = shape.validate(object);

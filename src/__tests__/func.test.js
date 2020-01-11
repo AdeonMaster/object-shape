@@ -2,12 +2,12 @@ import ObjectShape from '../';
 
 describe('func', () => {
   const shape = new ObjectShape({
-    test: ObjectShape.func
+    test: ObjectShape.func,
   });
 
   it('should return true', () => {
     const object = {
-      test: () => {}
+      test: () => {},
     };
 
     const errors = shape.validate(object);
@@ -18,7 +18,7 @@ describe('func', () => {
 
   it('should return false', () => {
     const object = {
-      test: null
+      test: null,
     };
 
     const errors = shape.validate(object);

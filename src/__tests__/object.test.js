@@ -2,14 +2,14 @@ import ObjectShape from '../';
 
 describe('object', () => {
   const shape = new ObjectShape({
-    user: ObjectShape.object
+    user: ObjectShape.object,
   });
 
   it('should return true', () => {
     const object = {
       user: {
-        name: 'Andy'
-      }
+        name: 'Andy',
+      },
     };
 
     const errors = shape.validate(object);
