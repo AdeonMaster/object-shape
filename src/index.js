@@ -13,7 +13,11 @@ class ObjectShape {
     this.shape = shape;
   }
 
-  static validate(shape, object) {
+  static validate(shape, object, options = {}) {
+    const suppressOwnPropertiesValidation = options.suppressOwnPropertiesValidation === undefined
+      ? false
+      : options.suppressOwnPropertiesValidation;
+
     const shapeKeys = Object.keys(shape);
     const shapeKeysLen = shapeKeys.length;
     const errors = [];
@@ -22,7 +26,9 @@ class ObjectShape {
       const shapeKey = shapeKeys[i];
 
       if (!Object.prototype.hasOwnProperty.call(object, shapeKey)) {
-        errors.push(`${formatMatchingErrorMessage(shapeKey)}: Object does not contain "${shapeKey}" property`);
+        if(!suppressOwnPropertiesValidation) {
+          errors.push(`${formatMatchingErrorMessage(shapeKey)}: Object does not contain "${shapeKey}" property`);
+        }
         continue;
       }
 
@@ -34,7 +40,7 @@ class ObjectShape {
       }
 
       const value = object[shapeKey];
-      const result = validator(value, shapeKey);
+      const result = validator(value, shapeKey, options);
 
       if (result !== true) {
         errors.push(typeof(result) === 'string'
@@ -47,8 +53,8 @@ class ObjectShape {
     return errors;
   }
 
-  validate(object) {
-    return ObjectShape.validate(this.shape, object);
+  validate(object, options={}) {
+    return ObjectShape.validate(this.shape, object, options);
   }
 }
 
@@ -105,7 +111,7 @@ ObjectShape.arrayOf = validator => (value, prop) => {
   return (value.length && value.every(item => validator('', item) === true)) || `${formatMatchingErrorMessage(prop)}: Not every element of "${prop}" passes condition`;
 }
 
-ObjectShape.objectOf = shape => (value, prop) => {
+ObjectShape.objectOf = shape => (value, prop, options) => {
   if (!isObject(shape)) {
     return `${shapeValidatorCreateError}: "objectOf" first argument is not an object`;
   }
@@ -114,7 +120,7 @@ ObjectShape.objectOf = shape => (value, prop) => {
     return `${formatMatchingErrorMessage(prop)}: "${prop}" is not an object`;
   }
 
-  const errors = new ObjectShape(shape).validate(value);
+  const errors = ObjectShape.validate(shape, value, options);
   if (errors.length) {
     return `${formatMatchingErrorMessage(prop)}: "${prop}" shape didn't passed the validation (${errors.join(', ')})`
   }
