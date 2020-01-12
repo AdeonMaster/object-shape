@@ -1,6 +1,6 @@
 {
   "name": "object-shape-validator",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Object shape validator inspired by React.js prop-types",
   "repository": {
     "type": "git",
